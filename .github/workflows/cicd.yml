@@ -44,7 +44,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./
+          context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
           cache-from: type=gha
@@ -58,10 +58,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
-            sudo docker stop discordbot || true
-            sudo docker rm discordbot || true
-            sudo docker run -d --name discordbot -p 8080:8080 \
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker pull ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker stop discordbot || true
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker rm discordbot || true
+            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker run -d --name discordbot -p 8080:8080 \
               -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
               -e GUILD_ID=${{ secrets.GUILD_ID }} \
               -e OWNER_ID=${{ secrets.OWNER_ID }} \
