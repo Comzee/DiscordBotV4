@@ -68,6 +68,3 @@ jobs:
               -e YOUTUBE_SECRET=${{ secrets.YOUTUBE_SECRET }} \
               -e GPT_SECRET=${{ secrets.GPT_SECRET }} \
               ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
-
-      - name: Cleanup
-        run: rm private_key
