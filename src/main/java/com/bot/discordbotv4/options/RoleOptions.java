@@ -6,12 +6,11 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class RoleOptions {
     public static OptionData handleRoleOptions(){
         return new OptionData(OptionType.STRING, "rolerequest", "Allows you to request a role", true)
-                .addChoice("Counter-Strike", "912638897316589579")
-                .addChoice("ShreeActiveRoster", "1137982033671495761")
-                .addChoice("Shreeveloper", "1044861143514099712")
-                .addChoice("Amigos", "695888137146335253")
-                .addChoice("Geek Squad", "698031938790752286")
-                .addChoice("Branded Payment", "572633970198446091")
-                .addChoice("Peasant", "747662211744399442");
+                .addChoice("Strawberry", "656942762901635095")
+                .addChoice("Emoji Sauce", "717458408227340411")
+                .addChoice("IRL", "717459083690770462")
+                .addChoice("Cyan Name", "717459143018938470")
+                .addChoice("Audio Friend", "1227047509931720836")
+                .addChoice("Rando", "941817816712089680");
     }
 }
