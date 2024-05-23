@@ -44,7 +44,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./
+          context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
           cache-from: type=gha
