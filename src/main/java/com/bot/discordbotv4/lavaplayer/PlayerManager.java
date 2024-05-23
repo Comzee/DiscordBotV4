@@ -1,6 +1,8 @@
 package com.bot.discordbotv4.lavaplayer;
 
 import com.bot.discordbotv4.embed.AudioTrackEmbed;
+import com.bot.discordbotv4.embed.AudioPlaylistEmbed;
+import com.bot.discordbotv4.embed.AudioTrackEmbed;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -11,9 +13,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerManager {
@@ -44,37 +48,47 @@ public class PlayerManager {
         });
     }
 
-    public void play(Guild guild, String trackURL, SlashCommandInteractionEvent event) {
+    public void play(Guild guild, String trackURL, InteractionHook hook) {
         GuildMusicManager guildMusicManager = getGuildMusicManager(guild);
         audioPlayerManager.loadItemOrdered(guildMusicManager, trackURL, new AudioLoadResultHandler() {
+
             @Override
             public void trackLoaded(AudioTrack track) {
                 guildMusicManager.getTrackScheduler().queue(track);
                 AudioTrackInfo info = track.getInfo();
                 if(guildMusicManager.getTrackScheduler().getQueue().isEmpty()){
-                    boolean nowPlaying = true;
-                    AudioTrackEmbed.audioTrackEmbedBuilder(info, event, nowPlaying);
+                    AudioTrackEmbed.audioTrackEmbedBuilder(info, hook, true, guildMusicManager.getTrackScheduler().getQueue().size());
                 }else{
-                    boolean addQueue = false;
-                    AudioTrackEmbed.audioTrackEmbedBuilder(info, event, addQueue);
+                    AudioTrackEmbed.audioTrackEmbedBuilder(info, hook, false, guildMusicManager.getTrackScheduler().getQueue().size());
                 }
 
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                guildMusicManager.getTrackScheduler().queue(playlist.getTracks().get(0));
+                AudioTrack firstTrack = playlist.getTracks().get(0);
+                guildMusicManager.getTrackScheduler().queue(firstTrack);
+                AudioTrackInfo info = firstTrack.getInfo();
+
+                // Queue the remaining tracks
+                List<AudioTrack> tracks = new ArrayList<>(playlist.getTracks());
+                AudioPlaylistEmbed.audioPlaylistEmbedBuilder(info, hook, tracks.size());
+                tracks.remove(0);
+                for(AudioTrack track : tracks){
+                    guildMusicManager.getTrackScheduler().queue(track);
+                }
             }
 
             @Override
             public void noMatches() {
-
+                hook.deleteOriginal().and(hook.sendMessage("No matches found for track, Please try again").setEphemeral(true)).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-
+                hook.deleteOriginal().and(hook.sendMessage("Failed to load track, Please try again").setEphemeral(true)).queue();
             }
+
         });
     }
 
