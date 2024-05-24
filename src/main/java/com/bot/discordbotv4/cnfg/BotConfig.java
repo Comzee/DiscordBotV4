@@ -34,7 +34,7 @@ public class BotConfig {
         JDABuilder builder = JDABuilder.createDefault(discordToken);
         builder.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.addEventListeners(new Listeners(guildId, ownerId, youtubeSecret, gptSecret));
-        builder.setActivity(Activity.customStatus("Not taking over the planet"));
+        builder.setActivity(Activity.customStatus("I lift my gaze to empty skies above"));
         return builder.build();
     }
 }
