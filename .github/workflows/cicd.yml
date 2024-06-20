@@ -56,12 +56,12 @@ jobs:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
+          port: 443
           script: |
-            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker pull ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
-            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker stop discordbot || true
-            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker rm discordbot || true
-            echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker run -d --name discordbot -p 8081:8081 \
+            docker pull ${{ secrets.DOCKER_USERNAME }}/discordbotv4:latest
+            docker stop discordbot || true
+            docker rm discordbot || true
+            docker run -d --name discordbot -p 8081:8081 \
               -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
               -e GUILD_ID=${{ secrets.GUILD_ID }} \
               -e OWNER_ID=${{ secrets.OWNER_ID }} \
